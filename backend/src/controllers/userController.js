@@ -56,3 +56,51 @@ module.exports.registerUser = async (req,res) => {
         })   
     }
 }
+
+module.exports.loginUser = async(req,res) => {
+    try {
+        // CLIENT SIDE ERROR HANDLING USING EXPRESS VALIDATOR
+        const error = validationResult(req);
+
+        if(!error.isEmpty()){
+            return res.status(400).json({erorrs: error.array()});
+        }
+        // EXTRACTING EMAIL AND PASSWORD FROM BODY
+        const {email, password} = req.body;
+
+        // FINDING USER IN DATABASE WITH THE GIVEN EMAIL
+        const user = await userModel.findOne({email}).select("+password");
+
+        // CHECK IF USER DOES NOT EXIST
+        if(!user){
+            return res.status(401).json({
+                message:"email or password incorrect"
+            })
+        }
+
+        // COMPARING PASSWORD
+        const isMatch = await user.comparePassword(password);
+
+        // CHECK IF PASSWORD DOES NOT MATCH 
+        if(!isMatch){
+            return res.status(401).json({
+                message:"email or password incorrect"
+            })
+        }
+
+        // GENERATING AUTH TOKEN
+        const token = user.generateAuthToken();
+
+        // RETURN SUCCESS STATUS
+        return res.status(200).json({
+            message:"User Login Successfully",
+            user,
+            token
+        })
+    } catch (error) {
+        res.status(500).json({
+            message:"Internal server Error",
+            error:error.message
+        })      
+    }
+}

@@ -1,3 +1,4 @@
+const blackListTokenModel = require('../models/blackListTokenModel');
 const userModel = require('../models/userModel');
 const createUser = require('../services/userService')
 const {validationResult} = require('express-validator');
@@ -42,7 +43,10 @@ module.exports.registerUser = async (req,res) => {
         // GENERATING JWT TOKEN FOR NEW USER
         const token = newUser.generateAuthToken();
 
-        
+        // ADDING TOKEN INTO THE COOKIES
+        res.cookie('token',token,{
+            httpOnly:true
+        })
 
         res.status(201).json({
             message:"User Created Successfully",
@@ -91,6 +95,11 @@ module.exports.loginUser = async(req,res) => {
         // GENERATING AUTH TOKEN
         const token = user.generateAuthToken();
 
+         // ADDING TOKEN INTO THE COOKIES
+        res.cookie('token',token,{
+            httpOnly:true
+        })
+
         // RETURN SUCCESS STATUS
         return res.status(200).json({
             message:"User Login Successfully",
@@ -102,5 +111,39 @@ module.exports.loginUser = async(req,res) => {
             message:"Internal server Error",
             error:error.message
         })      
+    }
+}
+
+module.exports.getProfile = async(req,res)=>{
+    try {
+       res.status(200).json({
+        user:req.user
+       })
+    } catch (error) {
+        res.status(500).json({
+            message:"Internal server Error",
+            error:error.message
+        })   
+    }
+}
+
+
+module.exports.logoutUser = async(req,res) => {
+    try {
+        // CLEAR COOKIES
+        res.clearCookie('token');
+
+        // ADD CURRENT TOKEN INTO THE BLACKLIST MODEL SO USER CANNOT USE THIS AGAIN FOR ACCESSING DATA
+        await blackListTokenModel.create({
+            token:req.cookies.token
+        })
+        res.status(200).json({
+            message:"User Logout Successfully"
+        })
+    } catch (error) {
+        res.status(500).json({
+            message:"Internal server Error",
+            error:error.message
+        }) 
     }
 }

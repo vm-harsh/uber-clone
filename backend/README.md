@@ -114,3 +114,83 @@ This endpoint validates the incoming credentials, checks whether the user exists
   "message": "email or password incorrect"
 }
 ```
+
+## `POST /captain/auth/register`
+
+Creates a new captain account.
+
+### Description
+This endpoint validates the incoming captain details, checks whether the email is already in use, hashes the password, creates the captain with vehicle information, and returns a JWT token for the new account.
+
+### Request Body
+```json
+{
+  "firstName": "Alex",
+  "lastName": "Driver",
+  "email": "alex.driver@example.com",
+  "password": "secret123",
+  "status": "active",
+  "vehicle": {
+    "color": "black",
+    "plate": "ABC123",
+    "capacity": 4,
+    "vehicleType": "car"
+  }
+}
+```
+
+### Validation Rules
+- `firstName` must be at least 3 characters long
+- `email` must be a valid email address
+- `password` must be at least 6 characters long
+- `vehicle.plate` must be at least 3 characters long
+- `vehicle.color` must be at least 3 characters long
+- `vehicle.capacity` must be a number greater than or equal to 1
+- `vehicle.vehicleType` must be one of `car`, `bike`, or `auto`
+
+### Status Codes
+- `201 Created` - Captain created successfully
+- `400 Bad Request` - Validation error, captain already exists, or captain creation failed
+- `500 Internal Server Error` - Unexpected server error
+
+### Example Success Response
+```json
+{
+  "message": "Captain Created Successfully",
+  "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
+  "captain": {
+    "fullName": {
+      "firstName": "Alex",
+      "lastName": "Driver"
+    },
+    "email": "alex.driver@example.com",
+    "password": "$2b$10$hashedpasswordvalue",
+    "socketId": null,
+    "status": "active",
+    "vehicle": {
+      "color": "black",
+      "plate": "ABC123",
+      "capacity": 4,
+      "vehicleType": "car"
+    },
+    "_id": "665a3f2b8c1d2a00123abc45",
+    "createdAt": "2026-06-02T12:00:00.000Z",
+    "updatedAt": "2026-06-02T12:00:00.000Z"
+  }
+}
+```
+
+### Example Validation Error Response
+```json
+{
+  "errors": [
+    {
+      "type": "field",
+      "value": "ab",
+      "msg": "FirstNme must be atleast 3 characters long",
+      "path": "firstName",
+      "location": "body"
+    }
+  ]
+}
+```

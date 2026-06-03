@@ -8,7 +8,10 @@ const captainRoute = require('./routes/captainRoutes')
 
 
 const app = express();
-app.use(cors());
+app.use(cors({
+    origin: 'http://localhost:5173',
+    credentials:true
+}));
 app.use(express.json());
 app.use(cookieParser());
 

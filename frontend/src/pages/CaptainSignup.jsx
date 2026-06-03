@@ -75,15 +75,15 @@ const CaptainSignup = () => {
                   </div>
                 </div>
 
-                <button type='submit' className='text-2xl bg-black w-full p-2 rounded text-white font-semibold'> Submit </button>
+                <button type='submit' className='text-2xl bg-black w-full p-2 rounded text-white font-semibold'> Create Account </button>
                 
 
-                <p className='text-lg text-center'>Already have an account? <Link to='/captain-login' className='text-blue-500 font-semibold'>login</Link></p>
+                <p className='text-lg text-center'>Already have an account? <Link to='/captain-login' className='text-blue-500 font-semibold'>login here</Link></p>
             </form>
 
         </div>
             <div className='mt-2'>
-                <Link to='/captain-signUp' className=' flex items-center justify-center text-2xl bg-[#eec36f] w-full p-2 rounded text-black font-semibold tracking-tight'>SignUp as Captain</Link>
+                <Link to='/signUp' className=' flex items-center justify-center text-2xl bg-[#28df4f] w-full p-2 rounded text-white font-semibold tracking-tight'>SignUp as User</Link>
             </div>
     </div>
   )

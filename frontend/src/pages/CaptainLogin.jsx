@@ -37,12 +37,12 @@ const CaptainLogin = () => {
                 </div>
                 <button type='submit' className='text-2xl bg-black w-full p-2 rounded text-white font-semibold'> Submit </button>
 
-                <p className='text-lg text-center'>Don't have an account? <Link to='/captain-signup' className='text-blue-500 font-semibold'>SignUp</Link></p>
+                <p className='text-lg text-center'>Don't have an account? <Link to='/captain-signup' className='text-blue-500 font-semibold'>Create Account</Link></p>
             </form>
 
         </div>
             <div className='mt-2'>
-                <Link to='/login' className=' flex items-center justify-center text-2xl bg-[#eec36f] w-full p-2 rounded text-black font-semibold tracking-tight'>Signin as User</Link>
+                <Link to='/login' className=' flex items-center justify-center text-2xl bg-[#28df4f] w-full p-2 rounded text-white font-semibold tracking-tight'>Signin as User</Link>
             </div>
     </div>
   )

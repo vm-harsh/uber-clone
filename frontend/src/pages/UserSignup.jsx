@@ -1,7 +1,14 @@
-import React, { useState } from 'react'
-import { Link } from 'react-router-dom'
+import React, { useContext, useState } from 'react'
+import { Link, useNavigate } from 'react-router-dom'
+import { userContext } from '../context/UserProvider'
+import axios from 'axios'
 
 const UserSignup = () => {
+    const navigate = useNavigate();
+    const {setUser} = useContext(userContext);
+    const [loading, setLoading] = useState(false);
+    const [err, setErr] = useState("");
+
     const [formData, setFormData] = useState({
         firstName:"",
         lastName:"",
@@ -17,9 +24,22 @@ const UserSignup = () => {
         }))
     }
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
-        console.log(formData);
+        if(loading) return;
+        try {
+            setLoading(true);
+            const response = await axios.post(`${import.meta.env.VITE_API_URL}/users/auth/register`,formData, {withCredentials:true});
+            if(response.status === 201)
+            {
+                setUser(response.data);
+                navigate('/home')
+            }
+        } catch (error) {
+            setErr(error.response?.data?.message);
+        } finally{
+            setLoading(false);
+        }
     }
 
   return (
@@ -44,16 +64,17 @@ const UserSignup = () => {
                 </div>
                 <div className='w-full flex flex-col items-start justify-center gap-1'>
                     <p className='text-xl font-semibold'>Enter Password</p>
-                    <input name='password' value={formData.password} required type='text' placeholder='......' className='bg-[#ededed] w-full text-2xl px-3 rounded py-2 outline-none' onChange={handleInput}/>
+                    <input name='password' value={formData.password} required type='password' placeholder='......' className='bg-[#ededed] w-full text-2xl px-3 rounded py-2 outline-none' onChange={handleInput}/>
                 </div>
-                <button type='submit' className='text-2xl bg-black w-full p-2 rounded text-white font-semibold'> Submit </button>
+                <button disabled={loading} type='submit' className='text-2xl bg-black w-full p-2 rounded text-white font-semibold'> {loading ? "Creating Account ..." : "Create Account"} </button>
 
-                <p className='text-lg text-center'>Already have an account? <Link to='/login' className='text-blue-500 font-semibold'>login</Link></p>
+                {err && <p className='text-lg text-center text-red-500'>{err}</p>}
+                <p className='text-lg text-center'>Already have an account? <Link to='/login' className='text-blue-500 font-semibold'>login here</Link></p>
             </form>
 
         </div>
             <div className='mt-2'>
-                <Link to='/captain-signUp' className=' flex items-center justify-center text-2xl bg-[#eec36f] w-full p-2 rounded text-black font-semibold tracking-tight'>SignUp as Captain</Link>
+                <Link to='/captain-signUp' className=' flex items-center justify-center text-2xl bg-[#f1e536] w-full p-2 rounded text-black font-semibold tracking-tight'>SignUp as Captain</Link>
             </div>
     </div>
   )

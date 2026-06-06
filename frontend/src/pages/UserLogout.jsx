@@ -9,8 +9,7 @@ const UserLogout = () => {
     const {user, setUser} = useContext(userContext);
     useEffect(()=>{
         const logout = async () => {
-            const response = await axios.get(`http://localhost:3000/users/auth/logout`,{withCredentials: true});
-            console.log(user);
+            const response = await axios.get(`${import.meta.env.VITE_API_URL}/users/auth/logout`,{withCredentials: true});
             if(response.status === 200){
                 setUser(null);
                 navigate('/login');

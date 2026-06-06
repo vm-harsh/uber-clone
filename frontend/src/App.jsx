@@ -14,6 +14,7 @@ import { captainContext } from './context/CaptainProvider'
 import CaptainProtected from './guards/CaptainProtected'
 import CaptainHome from './pages/CaptainHome'
 import { statusContext } from './context/StatusProvider'
+import CaptainLogout from './pages/CaptainLogout'
 
 
 
@@ -85,6 +86,11 @@ const App = () => {
               <CaptainHome/>
             </CaptainProtected>
           } />
+
+          <Route path='/captain/logout' element={
+          <CaptainProtected>
+            <CaptainLogout/>
+          </CaptainProtected>} />
       </Routes>
     </div>
   )

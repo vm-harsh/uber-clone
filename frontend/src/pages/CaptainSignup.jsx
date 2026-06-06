@@ -34,7 +34,7 @@ const CaptainSignup = () => {
       setCaptainLoading(true)
       const response = await axios.post(`${import.meta.env.VITE_API_URL}/captain/auth/register`, {
         firstName:formData.firstName,
-        lastName: formData.lastName,
+        ...(formData.lastName && { lastName: formData.lastName}),
         email: formData.email,
         password: formData.password,
         vehicle:{
@@ -70,7 +70,7 @@ const CaptainSignup = () => {
                   </div>
                   <div className='w-full flex flex-col items-start justify-center gap-1'>
                     <p className='text-xl font-semibold '>LastName</p>
-                    <input name='lastName' value={formData.lastName} required type='text' placeholder='Doe' className='bg-[#ededed] w-full text-2xl px-3 rounded py-2 outline-none' onChange={handleInput}/>
+                    <input name='lastName' value={formData.lastName} type='text' placeholder='Doe' className='bg-[#ededed] w-full text-2xl px-3 rounded py-2 outline-none' onChange={handleInput}/>
                 </div>
                 </div>
                 <div className='w-full flex flex-col items-start justify-center gap-1'>

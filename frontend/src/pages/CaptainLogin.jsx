@@ -1,7 +1,14 @@
-import React, { useState } from 'react'
-import { Link } from 'react-router-dom'
+import axios from 'axios';
+import React, { useContext, useState } from 'react'
+import { Link, useNavigate } from 'react-router-dom'
+import { captainContext } from '../context/CaptainProvider';
+import { statusContext } from '../context/StatusProvider';
 
 const CaptainLogin = () => {
+
+    const navigate = useNavigate();
+    const {captainLoading,setCaptainLoading,setCaptain} = useContext(captainContext);
+    const {err, setErr} = useContext(statusContext);
 
     const [formData, setFormData] = useState({
         email:"",
@@ -9,6 +16,7 @@ const CaptainLogin = () => {
     });
 
     const handleInput = (e) => {
+        setErr("");
         const {value, name} = e.target
         setFormData((prev) => ({
             ...prev,
@@ -16,9 +24,22 @@ const CaptainLogin = () => {
         }))
     }
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
-        console.log(formData);
+        if(captainLoading) return;
+        try {
+            setCaptainLoading(true);
+            const response = await axios.post(`${import.meta.env.VITE_API_URL}/captain/auth/login`, formData, {withCredentials:true});
+
+            if(response.status === 200){
+                setCaptain(response.data.captain);
+                navigate('/captain-home');
+            }
+        } catch (error) {
+            setErr(error.response?.data?.message)
+        } finally {
+            setCaptainLoading(false);
+        }
     }
 
   return (
@@ -35,8 +56,8 @@ const CaptainLogin = () => {
                     <p className='text-xl font-semibold'>Enter Password</p>
                     <input name='password' value={formData.password} required type='text' placeholder='......' className='bg-[#ededed] w-full text-2xl px-3 rounded py-2 outline-none' onChange={handleInput}/>
                 </div>
-                <button type='submit' className='text-2xl bg-black w-full p-2 rounded text-white font-semibold'> Submit </button>
-
+                <button disabled={captainLoading} type='submit' className='text-2xl bg-black w-full p-2 rounded text-white font-semibold'> Submit </button>
+                {err && <p className='text-lg text-center text-red-500'>{err}</p>}
                 <p className='text-lg text-center'>Don't have an account? <Link to='/captain-signup' className='text-blue-500 font-semibold'>Create Account</Link></p>
             </form>
 

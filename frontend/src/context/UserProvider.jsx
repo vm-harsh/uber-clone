@@ -6,9 +6,9 @@ export const userContext = createContext();
 
 const UserProvider = ({children}) => {
     const [user, setUser] = useState(null);
-    const [loading, setLoading] = useState(true);
+    const [userLoading, setUserLoading] = useState(true);
   return (
-    <userContext.Provider value={{user,setUser,loading,setLoading}}>
+    <userContext.Provider value={{user,setUser,userLoading, setUserLoading}}>
         {children}
     </userContext.Provider>
   )

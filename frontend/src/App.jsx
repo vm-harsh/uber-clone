@@ -9,30 +9,55 @@ import Home from './pages/Home'
 import UserProtected from './guards/UserProtected'
 import { userContext } from './context/UserProvider'
 import axios from 'axios'
+import UserLogout from './pages/UserLogout'
+import { captainContext } from './context/CaptainProvider'
+import CaptainProtected from './guards/CaptainProtected'
+import CaptainHome from './pages/CaptainHome'
+import { statusContext } from './context/StatusProvider'
 
 
 
 const App = () => {
-  const {setUser, setLoading} = useContext(userContext);
+  const {setUserLoading,setUser} = useContext(userContext);
+  const {setCaptainLoading,setCaptain} = useContext(captainContext);
 
-  useEffect(()=>{
-    const fetchUser = async () => {
-      try {
-        const response = await axios.get(`${import.meta.env.VITE_API_URL}/users/profile`,{withCredentials:true});
-        if(response.status === 200){
-          setUser(response.data.user);
-        }
-      } catch (error) {
-        setUser(null);
+  const fetchUser = async () => {
+    try {
+      const response = await axios.get(`${import.meta.env.VITE_API_URL}/users/profile`,{withCredentials:true});
+      if(response.status === 200){
+        setUser(response.data.user);
       }
-      finally{
-        setLoading(false)
-      };
-
+    } catch (error) {
+      setUser(null);
     }
+    finally{
+      setUserLoading(false)
+    };
 
-    fetchUser();
-  },[setUser, setLoading])
+  }
+
+  const fetchCaptain = async () => {
+    try {
+      const response = await axios.get(`${import.meta.env.VITE_API_URL}/captain/profile`, {withCredentials:true});
+      if(response.status === 200){
+      setCaptain(response.data.captain);
+    }
+    } catch (error) {
+      setCaptain(null);
+    }
+    finally{
+      setCaptainLoading(false)
+    }
+  }
+  
+  useEffect(()=>{
+    fetchUser(),
+    fetchCaptain()
+  },[])
+
+
+
+  
 
   return (
     <div>
@@ -47,6 +72,19 @@ const App = () => {
             <Home/>
           </UserProtected>
         } />
+        <Route path='/user/logout' element={
+          <UserProtected>
+            <UserLogout/>
+          </UserProtected>} />
+
+
+          {/* CAPTAIN ROUTES */}
+
+          <Route path='/captain-home' element={
+            <CaptainProtected>
+              <CaptainHome/>
+            </CaptainProtected>
+          } />
       </Routes>
     </div>
   )

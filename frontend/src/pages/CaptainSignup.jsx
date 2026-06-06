@@ -1,8 +1,14 @@
-import React, { useState } from 'react'
-import { Link } from 'react-router-dom'
+import React, { useContext, useState } from 'react'
+import { Link, useNavigate } from 'react-router-dom'
+import { statusContext } from '../context/StatusProvider';
+import axios from 'axios';
+import { captainContext } from '../context/CaptainProvider';
 
 const CaptainSignup = () => {
 
+  const {captainLoading,setCaptainLoading, setCaptain} = useContext(captainContext);
+  const {err, setErr} = useContext(statusContext);
+  const navigate = useNavigate();
   const [formData, setFormData] = useState({
     firstName:"",
     lastName:"",
@@ -10,7 +16,7 @@ const CaptainSignup = () => {
     password:"",
     color:"",
     plate:"",
-    capacity:"",
+    capacity:"1",
     vehicleType:"car"
   })
 
@@ -22,9 +28,33 @@ const CaptainSignup = () => {
         }))
     }
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log(formData);
+    try {
+      setCaptainLoading(true)
+      const response = await axios.post(`${import.meta.env.VITE_API_URL}/captain/auth/register`, {
+        firstName:formData.firstName,
+        lastName: formData.lastName,
+        email: formData.email,
+        password: formData.password,
+        vehicle:{
+          color:formData.color,
+          plate: formData.plate,
+          capacity: formData.capacity,
+          vehicleType: formData.vehicleType
+        }
+      }, {withCredentials:true});
+
+     if(response.status === 201){
+      setCaptain(response.data)
+      navigate('/captain-home')
+     }
+
+    } catch (error) {
+      setErr(error.response?.data?.message);
+    } finally{
+      setCaptainLoading(false)
+    }
   }
 
   return (
@@ -75,9 +105,9 @@ const CaptainSignup = () => {
                   </div>
                 </div>
 
-                <button type='submit' className='text-2xl bg-black w-full p-2 rounded text-white font-semibold'> Create Account </button>
+                <button disabled={captainLoading} type='submit' className='text-2xl bg-black w-full p-2 rounded text-white font-semibold'> Create Account </button>
                 
-
+                {err && <p className='text-lg text-center text-red-500'>{err}</p>}
                 <p className='text-lg text-center'>Already have an account? <Link to='/captain-login' className='text-blue-500 font-semibold'>login here</Link></p>
             </form>
 

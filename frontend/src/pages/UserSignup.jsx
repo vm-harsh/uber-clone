@@ -2,12 +2,12 @@ import React, { useContext, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { userContext } from '../context/UserProvider'
 import axios from 'axios'
+import { statusContext } from '../context/StatusProvider'
 
 const UserSignup = () => {
     const navigate = useNavigate();
-    const {setUser} = useContext(userContext);
-    const [loading, setLoading] = useState(false);
-    const [err, setErr] = useState("");
+    const {userLoading,setUserLoading, setUser} = useContext(userContext);
+    const {err, setErr} = useContext(statusContext);
 
     const [formData, setFormData] = useState({
         firstName:"",
@@ -26,9 +26,9 @@ const UserSignup = () => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        if(loading) return;
+        if(userLoading) return;
         try {
-            setLoading(true);
+            setUserLoading(true);
             const response = await axios.post(`${import.meta.env.VITE_API_URL}/users/auth/register`,formData, {withCredentials:true});
             if(response.status === 201)
             {
@@ -38,7 +38,7 @@ const UserSignup = () => {
         } catch (error) {
             setErr(error.response?.data?.message);
         } finally{
-            setLoading(false);
+            setUserLoading(false);
         }
     }
 
@@ -66,7 +66,7 @@ const UserSignup = () => {
                     <p className='text-xl font-semibold'>Enter Password</p>
                     <input name='password' value={formData.password} required type='password' placeholder='......' className='bg-[#ededed] w-full text-2xl px-3 rounded py-2 outline-none' onChange={handleInput}/>
                 </div>
-                <button disabled={loading} type='submit' className='text-2xl bg-black w-full p-2 rounded text-white font-semibold'> {loading ? "Creating Account ..." : "Create Account"} </button>
+                <button disabled={userLoading} type='submit' className='text-2xl bg-black w-full p-2 rounded text-white font-semibold'> {userLoading ? "Creating Account ..." : "Create Account"} </button>
 
                 {err && <p className='text-lg text-center text-red-500'>{err}</p>}
                 <p className='text-lg text-center'>Already have an account? <Link to='/login' className='text-blue-500 font-semibold'>login here</Link></p>

@@ -1,8 +1,65 @@
-import React, { useContext } from 'react'
+import React, { useContext, useState } from 'react'
+import map from '../assets/images/map.png'
+import LocationSearchPanel from '../components/LocationSearchPanel';
 
 const Home = () => {
+
+  const [open, setOpen] = useState(false);
+  const [formData, setFormData] = useState({
+    "source":"",
+    "destination":""
+  });
+
+  const handleClick = () => {
+    setOpen(true);
+  }
+
+  const handleChange = (e) => {
+    const {name , value} = e.target;
+    setFormData((prev) => ({
+      ...prev, 
+      [name] : value
+    }))
+  }
+
+  
+
+  const isTallScreen = window.innerHeight >= 700;
+
   return (
-    <div>Home</div>
+    <div className='w-full h-screen flex items-end justify-center overflow-hidden'>
+      <img src={map} className='h-[80%] absolute top-0 transition duration-400' onClick={()=>setOpen(false)} style={{filter: open ? 'brightness(30%)' : 'brightness(100%)'}}/>
+      <h1 className='text-black absolute top-3 left-3 text-4xl z-10 font-semibold font-sans tracking-tighter'>UBER</h1>
+      <div className={`w-full flex flex-col z-10 h-[90%] transition-transform duration-400 ${open ? 'translate-y-0' : isTallScreen ? 'translate-y-[75%]' :  'translate-y-[70%]'}`}>
+        <div className=' relative rounded-t-3xl border-t-2 h-[30%] w-full bg-white p-5 flex flex-col gap-2 [@media(min-height:700px)]:gap-5 [@media(min-height:700px)]:h-[25%]'>
+        <h1 className='text-xl font-semibold'>Find a trip</h1>
+        <p className='absolute h-12 w-0.5 bg-black top-20 left-10 [@media(min-height:700px)]:h-21'></p>
+        <form className='w-full flex flex-col gap-2 [@media(min-height:700px)]:gap-5'>
+          <input 
+            name='source'
+            value={formData.source} 
+            type='text' 
+            className='w-[98%] mx-auto border bg-[#ededed] text-lg rounded-xl py-2 px-10'
+            placeholder='Add a pick-up location'
+            onClick={handleClick}
+            onChange={handleChange}
+          />
+          <input 
+            name='destination' 
+            value={formData.destination} 
+            type='text' 
+            className='w-[98%] mx-auto border bg-[#ededed] text-lg rounded-xl p-2 px-10' 
+            placeholder='Enter your destination' 
+            onClick={handleClick} 
+            onChange={handleChange}
+          />
+        </form>
+        </div>
+        <div className='w-full bg-white h-[70%] [@media(min-height:700px)]:h-[75%] p-5'>
+          <LocationSearchPanel/>
+        </div>
+      </div>
+    </div>
   )
 }
 
